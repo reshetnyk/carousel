@@ -51,44 +51,56 @@ class Carousel {
             if (this.animationIsOn) {
                 return;
             }
-            this.slidesMargin += this.getSlideWidth(this.currentIndex);
-            this.elements.slides.style.marginLeft = `${this.slidesMargin}px`;
-            this.currentIndex--;
-            if (this.currentIndex <= 0) {
-                this.elements.slides.addEventListener('transitionend', () => {
-                    this.elements.slides.classList.add('no-transition');
-                    this.setSlide(this.slidesAmount);
-                    setTimeout(() => {
-                        this.elements.slides.classList.remove('no-transition');
-                    }, 10);
-                }, { once: true });
-            }
             this.animationIsOn = true;
-            setTimeout(() => {
-                this.animationIsOn = false;
-            }, this.slidesAnimationDuration * 1000 + 40);
+
+            const slideLeft = () => {
+                this.slidesMargin += this.getSlideWidth(this.currentIndex);
+                this.elements.slides.style.marginLeft = `${this.slidesMargin}px`;
+                this.currentIndex--;
+                setTimeout(() => {
+                    this.animationIsOn = false;
+                }, this.slidesAnimationDuration * 1000 + 40);
+            }
+
+            if (this.currentIndex <= 0) {
+                this.elements.slides.classList.add('no-transition');
+                this.setSlide(this.slidesAmount);
+                setTimeout(() => {
+                    this.elements.slides.classList.remove('no-transition');
+                    slideLeft();
+                }, 10);
+                return;
+            } 
+            slideLeft();
         };
 
         const nextBtnHandler = () => {
             if (this.animationIsOn) {
                 return;
             }
-            this.slidesMargin -= this.getSlideWidth(this.currentIndex);
-            this.elements.slides.style.marginLeft = `${this.slidesMargin}px`;
-            this.currentIndex++;
-            if (this.currentIndex >= this.slidesAmount) {
-                this.elements.slides.addEventListener('transitionend', () => {
-                    this.elements.slides.classList.add('no-transition');
-                    this.setSlide(0);
-                    setTimeout(() => {
-                        this.elements.slides.classList.remove('no-transition');
-                    }, 10);
-                }, { once: true });
-            }
+
             this.animationIsOn = true;
-            setTimeout(() => {
-                this.animationIsOn = false;
-            }, this.slidesAnimationDuration * 1000 + 30);
+
+            const slideRight = () => {
+                this.slidesMargin -= this.getSlideWidth(this.currentIndex);
+                this.elements.slides.style.marginLeft = `${this.slidesMargin}px`;
+                this.currentIndex++;
+                setTimeout(() => {
+                    this.animationIsOn = false;
+                }, this.slidesAnimationDuration * 1000 + 30);
+            }
+
+            if (this.currentIndex >= this.slidesAmount) {
+                this.elements.slides.classList.add('no-transition');
+                this.setSlide(0);
+                setTimeout(() => {
+                    this.elements.slides.classList.remove('no-transition');
+                    slideRight();
+                }, 10);
+                return;
+            } 
+
+            slideRight();
         };
         this.elements.prev.addEventListener('click', prevBtnHandler);
         this.elements.next.addEventListener('click', nextBtnHandler);
